@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Store</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        #appList {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .app-category {
+            width: 100%;
+            text-align: left;
+            margin: 20px 0 10px;
+            font-weight: bold;
+        }
+
+        .app-item {
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            width: 250px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .downloadBtn {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        #storage {
+            margin-top: 20px;
+        }
+
+        #taskbar {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        #top-buttons {
+            margin-top: 10px;
+            display: flex;
+        }
+
+        #addAppsBtn {
+            margin-right: 10px;
+        }
+
+        .app-icon {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+
+        #backBtn {
+            margin-top: 20px;
+            display: none;
+        }
+
+        #searchInput {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="taskbar">
+        <button id="appsBtn">Apps</button>
+        <button id="gamesBtn">Games</button>
+        <button id="deliveryAppsBtn">Delivery Apps</button>
+        <button id="chartsBtn">Charts</button>
+        <button id="websiteBtn">Website</button>
+    </div>
+
+    <div id="top-buttons">
+        <input type="text" id="searchInput" placeholder="Search...">
+        <button id="addAppsBtn">Add Apps</button>
+        <input type="file" id="appFileInput" accept=".zip, .apk" multiple>
+        <button id="backBtn">Back</button>
+    </div>
+
+    <h1>App Store</h1>
+
+    <ul id="appList">
+        <!-- Display list of apps here -->
+    </ul>
+
+    <div id="storage">
+        <h2>Storage</h2>
+        <p id="memory">Total Memory: 0 MB</p>
+        <button id="downloadAllBtn">Download All Apps</button>
+    </div>
+
+    <script>
+        var totalMemory = 0;
+        var currentCategory = 'All';
+
+        // Default Apps with Material Icons URLs
+        var defaultApps = [
+            { name: 'Vidmate', version: '1.0', size: 10, category: 'Apps', download:'https://www.w3schools.com/howto/tryit.asp?filename=tryhow_html_download_link', icon: 'file:///C:/Users/syedm/Downloads/vidmate%20images.webp' },
+            { name: 'Instagram', version: '2.5', size: 15, category: 'Apps', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/images%20insta.jpeg' },
+            { name: 'Facebook', version: '3.0', size: 20, category: 'Apps', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/facebook.png' },
+            { name: 'Twitter', version: '4.2', size: 18, category: 'Apps', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/twitter.png' },
+            { name: 'Car Racing Game', version: '1.8', size: 25, category: 'Games', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/car.jpeg' },
+            { name: 'Bike Racing Game', version: '2.3', size: 22, category: 'Games', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/bike.jpeg' },
+            { name: 'Ludo', version: '1.2', size: 12, category: 'Games', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/ludo.jpeg' },
+            { name: 'Chess Game', version: '2.0', size: 18, category: 'Games', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/chess.jpeg' },
+            { name: 'Dunzo', version: '1.5', size: 30, category: 'Delivery Apps', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/dunzo.jpeg' },
+            { name: 'Swiggy', version: '3.2', size: 28, category: 'Delivery Apps', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/swiggy.png' },
+            { name: 'Zomato', version: '2.8', size: 25, category: 'Delivery Apps', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/zomzto.jpeg' },
+            { name: 'youtube', version: '1.0', size: 15, category: 'Charts', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/youtube.jpeg' },
+            { name: 'watsapp', version: '1.2', size: 16, category: 'Charts', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/watsapp.jpeg'},
+            { name: 'Chrome', version: '1.5', size: 18, category: 'Charts', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/chrome.jpeg' },
+            { name: 'sms', version: '2.0', size: 22, category: 'Charts', icon: 'file:///C:/Users/syedm/OneDrive/Desktop/play%20store%20app/chat.png' }
+        ];
+
+        // Initialize with default apps
+        defaultApps.forEach(function(app) {
+            totalMemory += app.size;
+            var appItem = createAppItem(app.name, app.version, app.size, app.icon, app.category);
+            document.getElementById('appList').appendChild(appItem);
+        });
+
+        updateMemoryDisplay();
+
+        document.getElementById('addAppsBtn').addEventListener('click', function() {
+            document.getElementById('appFileInput').click();
+        });
+
+        document.getElementById('appFileInput').addEventListener('change', function(event) {
+            var selectedFiles = event.target.files;
+
+            for (var i = 0; i < selectedFiles.length; i++) {
+                var appName = prompt("Enter the name of the application:");
+                var appVersion = prompt("Enter the version of the application:");
+                var appCategory = prompt("Enter the category of the application:");
+
+                if (appName && appVersion && appCategory) {
+                    var fileSize = (selectedFiles[i].size / 1024 / 1024).toFixed(2);
+                    totalMemory += parseFloat(fileSize);
+
+                    var appItem = createAppItem(appName, appVersion, fileSize, 'file:///C:/Users/syedm/Downloads/Android-logo.jpg', appCategory);
+                    document.getElementById('appList').appendChild(appItem);
+
+                    updateMemoryDisplay();
+                }
+            }
+        });
+
+        document.getElementById('downloadAllBtn').addEventListener('click', function() {
+            var appItems = document.querySelectorAll('.app-item');
+            var zip = new JSZip();
+
+            appItems.forEach(function(appItem) {
+                var appName = appItem.querySelector('.appName').textContent;
+                var appFile = appItem.querySelector('.appFile').textContent;
+                zip.file(appName + '.apk', appFile);
+            });
+
+            zip.generateAsync({type: "blob"}).then(function(content) {
+                saveAs(content, "all_apps.zip");
+            });
+        });
+
+        document.getElementById('appsBtn').addEventListener('click', function() {
+            filterApps('Apps');
+        });
+
+        document.getElementById('gamesBtn').addEventListener('click', function() {
+            filterApps('Games');
+        });
+
+        document.getElementById('deliveryAppsBtn').addEventListener('click', function() {
+            filterApps('Delivery Apps');
+        });
+
+        document.getElementById('chartsBtn').addEventListener('click', function() {
+            filterApps('Charts');
+        });
+
+        document.getElementById('websiteBtn').addEventListener('click', function() {
+            alert('Opening Website');
+        });
+
+        document.getElementById('backBtn').addEventListener('click', function() {
+            filterApps('All');
+        });
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            var searchQuery = this.value.toLowerCase();
+            var appItems = document.querySelectorAll('.app-item');
+
+            appItems.forEach(function(appItem) {
+                var appName = appItem.querySelector('.appName').textContent.toLowerCase();
+                if (appName.includes(searchQuery)) {
+                    appItem.style.display = 'flex';
+                } else {
+                    appItem.style.display = 'none';
+                }
+            });
+        });
+
+        function filterApps(category) {
+            var appItems = document.querySelectorAll('.app-item');
+            appItems.forEach(function(appItem) {
+                var appCategory = appItem.getAttribute('data-category');
+                if (category === 'All' || appCategory === category) {
+                    appItem.style.display = 'flex';
+                } else {
+                    appItem.style.display = 'none';
+                }
+            });
+
+            if (category !== 'ALL') {
+                document.getElementById('backBtn').style.display = 'block';
+            } else {
+                document.getElementById('backBtn').style.display = 'none';
+            }
+        }
+
+        function createAppItem(appName, appVersion, fileSize, icon, category) {
+            var appItem = document.createElement('li');
+            appItem.classList.add('app-item');
+            appItem.setAttribute('data-category', category);
+            appItem.innerHTML = `
+                <img src="${icon}" alt="App Icon" class="app-icon">
+                <div class="appName">${appName}</div>
+                <div class="appVersion">Version: ${appVersion}</div>
+                <div class="appFile" style="display: none">${fileSize}</div>
+                <button class="downloadBtn"><a href="https://apps.microsoft.com/apps?hl=en-us&gl=US}"style="color: white; text-decoration: none;">Download</a></button>
+            `;
+ 
+
+           
+ appItem.querySelector('.downloadBtn').addEventListener('click', function() {
+                downloadApp(appName, appVersion, fileSize);
+            });
+
+            return appItem;
+        }
+
+        function downloadApp(appName, appVersion, fileSize) {
+            var blob = new Blob([`This is a dummy content for ${appName} version ${appVersion}, Size: ${fileSize} MB`], { type: 'application/octet-stream' });
+            var downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = `${appName}_${appVersion}.apk`;
+            downloadLink.click();
+        }
+
+        function updateMemoryDisplay() {
+            document.getElementById('memory').textContent = `Total Memory: ${totalMemory.toFixed(2)} MB`;
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+</body>
+
+</html>
